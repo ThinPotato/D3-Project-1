@@ -13,12 +13,17 @@
     </select>
 
 <script>
-    //Will be called when a new drop down option is selected. should return the value so d3 can organize.
+    //TODO: Will be called when a new drop down option is selected. should return the value so d3 can organize.
     function getDropDownValue(){
         var ddReference = document.getElementsByClassName("dropdown_content");
         selected = ddReference.options[ddReference.selectedIndex].value;
         return selected;
     }
+
+    // load data
+    d3.csv("Access Assignment 1 Proposal - Bryce Stoker-Schaeffer (11199983).csv", function(data){
+        //TODO: Parse data here
+    });
 
    d3.select('h3').style('color', 'darkblue');
    d3.select('h3').style('font-size', '24px');
