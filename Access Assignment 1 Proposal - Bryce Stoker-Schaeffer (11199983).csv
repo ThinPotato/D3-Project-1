@@ -1,4 +1,4 @@
-State,City,Avg Sleepiness,People Queried About Sleep,Crashes per Year,Avg Crash Severity,Percent Morning Crashes,Percent Evening Crashes
+State,City,Avg_Sleepiness,People_Queried_About_Sleep,Crashes_per_Year,Avg_Crash_Severity,Percent_Morning_Crashes,Percent_Evening_Crashes
 AZ,Glendale,36.17%,109,16.25,2.123076923,56.92%,43.08%
 FL,Port St. Lucie,36.93%,24,0,#N/A,#DIV/0!,#DIV/0!
 CO,Aurora,32.38%,133,9.25,2.297297297,72.97%,27.03%
