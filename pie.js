@@ -54,7 +54,14 @@ function loadChart(selected){
     height = 800,
     radius = Math.min(width, height) / 2 
     g = svg.append('g').attr('transform', 'translate('+ width / 2 + ',' + height / 2 + ')');
+
     var pie = d3.pie()
+    .value(function(d){
+        console.log("Key Value: " +d.People_Queried_About_Sleep)
+        console.log("selected key value: " + dataSelector(d))
+        return dataSelector(d, selected)
+    }).sort(null)
+
 
     var arc = d3.arc().innerRadius(0).outerRadius(radius)
 
@@ -67,23 +74,24 @@ function loadChart(selected){
 
     d3.csv('Access Assignment 1 Proposal - Bryce Stoker-Schaeffer (11199983).csv').then(function(data){
         console.log(data)
+        
         var arcs = g.selectAll('arc')
-        .data(pie(data.map(function(d){return Number(dataSelector(d,selected));}).slice(0,7)))
+        .data(pie(data))
         .enter().append('g')
         .attr('class','arc')
+        
         var color = d3.scaleOrdinal(['#e40303','#ff8c00', '#ffed00', '#008026','#004dff','#750787'])
         console.log(data)
+        
         arcs.append('path') 
 		.attr('fill',function(d){
-			return color(data.map(function(d){return d.State}));
+			return color(d.data.State);
 		})
 		.attr('d', arc);
         arcs.append('text')
 			.attr('transform', function(d){return 'translate(' + label.centroid(d) + ')';})
 			.text(function(d){
-                console.log(d)
-                console.log("name "+d.data)
-                return d.data});
+                return d.data.State});
     });
 
     d3.select('h3').style('color', 'darkblue');
