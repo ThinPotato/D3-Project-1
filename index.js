@@ -1,4 +1,4 @@
-loadChart(0)
+loadChart(1)
 //TODO: Will be called when a new drop down option is selected. should return the value so d3 can organize.
 function getDropDownValue(){
     var ddReference = document.getElementsByClassName("dropdown_content");
@@ -11,28 +11,29 @@ document.getElementById("element_selector").onchange = function() {selectElement
 function selectElement(){
     var selected = document.getElementById('element_selector').selectedOptions[0].value;
     console.log('changing to ' + selected)
+    d3.select("svg").remove()
     loadChart(selected)
 }
 
 function dataSelector(element, selected){
     console.log('updating data to ' + selected)
     switch (selected) {
-        case 0:
+        case "0":
             return element.Avg_Sleepiness.substring(0,5)
             break;
-        case 1:
+        case "1":
             return element.People_Queried_About_Sleep
             break;
-        case 2:
+        case "2":
             return element.Crashes_per_Year
             break;
-        case 3:
+        case "3":
             return element.Avg_Crash_Severity
             break;
-        case 4:
+        case "4":
             return element.Percent_Morning_Crashes.substring(0,5)
             break;
-        case 5:
+        case "5":
             return element.Percent_Evening_Crashes.substring(0,5)
             break;
         default:
@@ -41,6 +42,10 @@ function dataSelector(element, selected){
 }
 
 function loadChart(selected){
+    var svg = d3.select("body")
+    .append("svg")
+    .attr("width", 30000)
+    .attr("height", 800);
     // bar chart
     d3.csv("Access Assignment 1 Proposal - Bryce Stoker-Schaeffer (11199983).csv").then(function(data){
         console.log(data)
@@ -57,7 +62,7 @@ function loadChart(selected){
         yScale.domain([0, d3.max(data,function(d){return Number(dataSelector(d,selected));})])
         g.append("g").attr("transform", "translate(0," + height + ")").call(d3.axisBottom(xScale))
         g.append("g").call(d3.axisLeft(yScale).tickFormat(function(d){
-            return d + "%";
+            return d + ((selected ==0 || selected == 4 || selected ==5) ? "%" : "");
         }).ticks(10))
 
         g
