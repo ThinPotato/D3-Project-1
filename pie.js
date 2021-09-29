@@ -56,6 +56,7 @@ function loadChart(selected){
         height = svg.attr("height") - margin,
         xScale = d3.scaleBand().range([0,width]).padding(0.5),
         yScale = d3.scaleLinear().range([height,0]),
+        radius = Math.min(width, height) / 2 - margin
         g = svg.append("g").attr("transform", "translate("+100+","+100+")");
 
         xScale.domain(data.map(function(d){return d.State;}));
@@ -71,8 +72,6 @@ function loadChart(selected){
         .enter()
         .append("rect")
         .attr("class","bar")
-        .attr("x", function(d){return xScale(d.State);})
-        .attr("y", function(d) {return yScale(Number(dataSelector(d,selected)));})
         .attr("width", xScale.bandwidth())
         .attr("height", function(d){return height - yScale(Number(dataSelector(d,selected)));})
     });
