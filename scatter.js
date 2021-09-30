@@ -123,7 +123,7 @@ function loadChart(selectedX, selectedY){
 
         //TODO: Parse data here
         var svg = d3.select("svg"),
-        margin = 300,
+        margin = 200,
         width = 2000 - margin,
         height = svg.attr("height") - margin,
         xScale = d3.scaleBand().range([0,width]).padding(0.5),
@@ -131,7 +131,7 @@ function loadChart(selectedX, selectedY){
         g = svg.append("g").attr("transform", "translate("+100+","+100+")");
 
         xScale.domain(data.map(function(d){return d.value}));
-        yScale.domain([0, d3.max(data,function(d){return d.value2;})])
+        yScale.domain([0, d3.max(data,function(d){return d.value2;})-100])
         g.append("g").attr("transform", "translate(0," + height + ")").call(d3.axisBottom(xScale))
         g.append("g").call(d3.axisLeft(yScale).tickFormat(function(d){
             return d + ((selectedX ==0 || selectedX == 4 || selectedX ==5) ? "%" : "");
@@ -140,38 +140,39 @@ function loadChart(selectedX, selectedY){
         var color = d3.scaleOrdinal()
         .domain(data.map(d => d.State))
         .range(d3.quantize(t => d3.interpolateSpectral(t * 0.8 + 0.1), data.length).reverse())
+
           
+        var circles =  svg.selectAll("g.dot")
+            .data(data)
+            .enter().append('g');
 
-        g
-        .selectAll("circle")
-        .data(data)
-        .enter()
-        .append("circle")
-        .attr("cx", function(d){return xScale(d.value);})
-        .attr("cy", function(d) {return yScale(d.value2);})
-        .attr("r", xScale.bandwidth()/2)
-        .style("fill", function (d) { return color(d.State) } )
-
-        margin = ({top: 25, right: 20, bottom: 35, left: 40})
-
-        x = d3.scaleLinear()
-        .domain(d3.extent(data, d => d.value)).nice()
-        .range([margin.left, width])
-
-        y = d3.scaleLinear()
-        .domain(d3.extent(data, d => d.value2)).nice()
-        .range([height, margin.top])
         
-        svg.append("g")
-        .attr("font-family", "sans-serif")
-        .attr("font-size", 10)
-        .selectAll("text")
-        .data(data)
-        .join("text")
-        .attr("dy", "0.35em")
-        .attr("x", d => x(d.value) + 7)
-        .attr("y", d => y(d.value2))
-        .text(d => d.State);
+        circles.append("circle")
+        .attr("class", "dot")
+        .attr("r", 10)
+        .attr("cx", function (d) {
+            return xScale(d.value);
+        })
+        .attr("cy", function (d) {
+            return yScale(d.value2);
+        })
+        .style("fill", function (d) {
+            return color(d.State);
+        });
+
+        circles.append("text").text(function(d){
+            return d.State;
+        })
+        .attr("x", function (d) {
+            return xScale(d.value);
+        })
+        .attr("y", function (d) {
+            return yScale(d.value2);
+        });
+
+        
+
+
     });
 
     d3.select('h3').style('color', 'darkblue');
