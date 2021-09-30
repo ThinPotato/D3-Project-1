@@ -52,8 +52,24 @@ function dataSum(data, selected){
             numToAdd = numToAdd/count
         }
         //newData[State] = numToAdd
-        newData.push({State: State, value: numToAdd})
+        if(numToAdd > 0){
+            newData.push({State: State, value: numToAdd})
+        }
         console.log("added "+ numToAdd + " to " + State)
+        }
+        newData.sort((a,b)=>b.value-a.value)
+        datalength = newData.length -1
+        for(let i = datalength; i>6; i--){
+            console.log('calc')
+            oldData = newData.pop(newData[i])
+            if(i==datalength){
+            newData.unshift({State:'other', value:oldData.value})
+            }
+            else{
+                oldStart = newData.shift()
+                newData.unshift({State:'other', value: oldData.value + oldStart.value})
+
+            }
         }
     return newData
 }
@@ -115,7 +131,7 @@ function loadChart(selected){
         arcs.append('text')
 			.attr('transform', function(d){return 'translate(' + label.centroid(d) + ')';})
 			.text(function(d){
-                return d.data.State});
+                return d.data.State + ": " + d.data.value});
     });
 
     d3.select('h3').style('color', 'darkblue');
