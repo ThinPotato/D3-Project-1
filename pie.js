@@ -48,7 +48,7 @@ function dataSum(data, selected){
                     numToAdd += Number(value2.Avg_Sleepiness.substring(0,5))
             }
         }
-        if(selected == '0' || selected == '4' || selected == '5'){
+        if(selected == '0' || selected == '3' || selected == '5' || selected == '4'){
             numToAdd = numToAdd/count
         }
         //newData[State] = numToAdd
@@ -106,7 +106,7 @@ function loadChart(selected){
         var color = d3.scaleOrdinal()
         .domain(data.map(d => d.name))
         .range(d3.quantize(t => d3.interpolateSpectral(t * 0.9 + 0.1), data.length).reverse())
-          
+
         arcs.append('path') 
 		.attr('fill',function(d){
 			return color(d.data.State);
