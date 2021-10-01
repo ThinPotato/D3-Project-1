@@ -1,13 +1,14 @@
 loadChart('0')
 
-function getDropDownValue(){
-    var ddReference = document.getElementsByClassName("dropdown_content");
-    selected = ddReference.options[ddReference.selectedIndex].value;
-    return selected;
-}
+
 var data;
 document.getElementById("element_selector").onchange = function() {selectElement()};
 
+function getDropDownValueText(){
+    var selected = document.getElementById('element_selector').selectedOptions[0].text;
+    console.log(selected)
+    return selected
+}
 function selectElement(){
     var selected = document.getElementById('element_selector').selectedOptions[0].value;
     console.log('changing to ' + selected)
@@ -93,17 +94,34 @@ function loadChart(selected){
         const yScale = d3.scaleLinear()
         .domain([0, d3.max(bins, d => d.length)]).nice()
         .range([height, 0])  
+
         g.append("g")
         .attr("transform", "translate(0," +height +")")
         .call(d3.axisBottom(xScale).ticks(20))
         .call(g => g.append("text")
-        .text(data.x))
+        .text("TEST"))
 
         g.append("g")
         .attr("transform", `translate(40,0)`)
         .call(d3.axisLeft(yScale).ticks(10))
         .call(g => g.select(".tick")
-        .text(data.y));
+        .text("test"));
+
+        //axis labels
+        svg.append("text")
+        .attr("class","x label")
+        .attr("text-anchor","end")
+        .attr("x", width/2 )
+        .attr("y",  height+50 )
+        .text(getDropDownValueText);
+
+        svg.append("text")
+        .attr("class", "y label")
+        .attr("text-anchor", "end")
+        .attr("y", 0)
+        .attr("dy", ".75em")
+        .attr("transform", "rotate(-90)")
+        .text("Number of States");
 
         //color
         var color = d3.scaleOrdinal()

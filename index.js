@@ -1,10 +1,11 @@
 loadChart(1)
-
-function getDropDownValue(){
-    var ddReference = document.getElementsByClassName("dropdown_content");
-    selected = ddReference.options[ddReference.selectedIndex].value;
-    return selected;
+function getDropDownValueText(){
+    var selected = document.getElementById('element_selector').selectedOptions[0].text;
+    console.log(selected)
+    return selected
 }
+
+
 var data;
 document.getElementById("element_selector").onchange = function() {selectElement()};
 
@@ -65,6 +66,23 @@ function loadChart(selected){
             return d + ((selected ==0 || selected == 4 || selected ==5) ? "%" : "");
         }).ticks(10))
 
+
+             //axis labels
+        g.append("text")
+        .attr("class","x label")
+        .attr("text-anchor","end")
+        .attr("x", width/2 )
+        .attr("y",  height+50 )
+        .text("States");
+
+        g.append("text")
+        .attr("class", "y label")
+        .attr("text-anchor", "end")
+        .attr("y", 0)
+        .attr("dy", ".75em")
+        .attr("transform", "rotate(-90), translate(-200,-40)")
+        .text(getDropDownValueText);
+
         var color = d3.scaleOrdinal()
         .domain(data.map(d => d.name))
         .range(d3.quantize(t => d3.interpolateSpectral(t * 0.9 + 0.1), data.length).reverse())
@@ -83,6 +101,8 @@ function loadChart(selected){
 			return color(d.State);
 		})
     });
+
+
 
     d3.select('h3').style('color', 'darkblue');
     d3.select('h3').style('font-size', '24px');

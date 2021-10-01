@@ -1,5 +1,5 @@
 
-function getDropDownValue(){
+function getDropDownValueText(){
     var ddReference = document.getElementsByClassName('dropdown_content');
     selected = ddReference.options[ddReference.selectedIndex].value;
     return selected;

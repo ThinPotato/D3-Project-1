@@ -1,9 +1,9 @@
 loadChart('0','0')
 
-function getDropDownValue(){
-    var ddReference = document.getElementsByClassName("dropdown_content");
-    selected = ddReference.options[ddReference.selectedIndex].value;
-    return selected;
+function getDropDownValueText(name){
+    var selected = document.getElementById(name).selectedOptions[0].text;
+    console.log(selected)
+    return selected
 }
 var data;
 document.getElementById("element_selector").onchange = function() {selectElement()};
@@ -139,6 +139,22 @@ function loadChart(selectedX, selectedY){
         g.append("g").call(d3.axisLeft(yScale).tickFormat(function(d){
             return d + ((selectedY =='0' || selectedY == '4' || selectedY =='5') ? "%" : "");
         }).ticks(20))
+
+
+        g.append("text")
+        .attr("class","x label")
+        .attr("text-anchor","end")
+        .attr("x", width/2 )
+        .attr("y",  height+50 )
+        .text(getDropDownValueText('element_selector2'));
+
+        g.append("text")
+        .attr("class", "y label")
+        .attr("text-anchor", "end")
+        .attr("y", 0)
+        .attr("dy", ".75em")
+        .attr("transform", "rotate(-90), translate(-200,-50)")
+        .text(getDropDownValueText('element_selector'));
 
         var color = d3.scaleOrdinal()
         .domain(data.map(d => d.State))
