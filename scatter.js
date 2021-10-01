@@ -1,4 +1,4 @@
-loadChart(0,0)
+loadChart('0','0')
 
 function getDropDownValue(){
     var ddReference = document.getElementsByClassName("dropdown_content");
@@ -102,8 +102,11 @@ function dataSum(data, selectedX, selectedY){
         if(selectedY == '0' || selectedY == '3' || selectedY == '5' || selectedY == '4'){
             numToAdd2 = numToAdd2/count
         }
+        newData.sort((a,b)=>a.value-b.value)
         //newData[State] = numToAdd
+        if( numToAdd > 0 && numToAdd2 >0){
         newData.push({State: State, value: numToAdd, value2: numToAdd2})
+        }
         console.log("added \n"+ selectedX + ": " + numToAdd+ "\n" + selectedY + ": " + numToAdd2+ " to " + State)
         }
     return newData
@@ -113,29 +116,29 @@ function loadChart(selectedX, selectedY){
     var svg = d3.select("body")
     .append("svg")
     .attr("width", 2000)
-    .attr("height", 800);
+    .attr("height", 1000);
     // bar chart
     d3.csv("Access Assignment 1 Proposal - Bryce Stoker-Schaeffer (11199983).csv").then(function(data){
         console.log(data)
         //aggregate data
         data = dataSum(data, selectedX, selectedY)
         console.log(data)
-
         //TODO: Parse data here
         var svg = d3.select("svg"),
         margin = 200,
-        width = 2000 - margin,
+        width = 2000,
         height = svg.attr("height") - margin,
-        xScale = d3.scaleBand().range([0,width]).padding(0.5),
-        yScale = d3.scaleLinear().range([height,0]),
+
+        xScale = d3.scaleLinear().range([0,width]).domain([0, d3.max(data,function(d){return d.value})]),
+        yScale = d3.scaleLinear().range([height,0]).domain([0, d3.max(data,function(d){return d.value2})]),
         g = svg.append("g").attr("transform", "translate("+100+","+100+")");
 
-        xScale.domain(data.map(function(d){return d.value}));
-        yScale.domain([0, d3.max(data,function(d){return d.value2;})-100])
-        g.append("g").attr("transform", "translate(0," + height + ")").call(d3.axisBottom(xScale))
+        g.append("g").attr("transform", "translate(0," + height + ")").call(d3.axisBottom(xScale).tickFormat(function(d){
+            return d + ((selectedX =='0' || selectedX == '4' || selectedX =='5') ? "%" : "");
+        }).ticks(20))
         g.append("g").call(d3.axisLeft(yScale).tickFormat(function(d){
-            return d + ((selectedX ==0 || selectedX == 4 || selectedX ==5) ? "%" : "");
-        }).ticks(10))
+            return d + ((selectedY =='0' || selectedY == '4' || selectedY =='5') ? "%" : "");
+        }).ticks(20))
 
         var color = d3.scaleOrdinal()
         .domain(data.map(d => d.State))
@@ -151,10 +154,11 @@ function loadChart(selectedX, selectedY){
         .attr("class", "dot")
         .attr("r", 10)
         .attr("cx", function (d) {
-            return xScale(d.value);
+            return 100 +xScale(d.value);
         })
         .attr("cy", function (d) {
-            return yScale(d.value2);
+            console.log(d.State+" belongs at Y: "+d.value2)
+            return yScale(d.value2) + 100;
         })
         .style("fill", function (d) {
             return color(d.State);
@@ -164,10 +168,10 @@ function loadChart(selectedX, selectedY){
             return d.State;
         })
         .attr("x", function (d) {
-            return xScale(d.value);
+            return 100 +xScale(d.value);
         })
         .attr("y", function (d) {
-            return yScale(d.value2);
+            return yScale(d.value2) + 100 ;
         });
 
         

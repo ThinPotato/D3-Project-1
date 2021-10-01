@@ -1,16 +1,17 @@
+loadChart('0')
 
 function getDropDownValue(){
-    var ddReference = document.getElementsByClassName('dropdown_content');
+    var ddReference = document.getElementsByClassName("dropdown_content");
     selected = ddReference.options[ddReference.selectedIndex].value;
     return selected;
 }
 var data;
-document.getElementById('element_selector').onchange = function() {selectElement()};
+document.getElementById("element_selector").onchange = function() {selectElement()};
 
 function selectElement(){
     var selected = document.getElementById('element_selector').selectedOptions[0].value;
     console.log('changing to ' + selected)
-    d3.select('svg').remove()
+    d3.select("svg").remove()
     loadChart(selected)
 }
 
@@ -58,84 +59,76 @@ function dataSum(data, selected){
         console.log("added "+ numToAdd + " to " + State)
         }
         newData.sort((a,b)=>b.value-a.value)
-        datalength = newData.length -1
-        for(let i = datalength; i>6; i--){
-            console.log('calc')
-            oldData = newData.pop(newData[i])
-            if(i==datalength){
-            newData.unshift({State:'other', value:oldData.value})
-            }
-            else{
-                oldStart = newData.shift()
-                newData.unshift({State:'other', value: oldData.value + oldStart.value})
-
-            }
-        }
     return newData
 }
 
+//X-axis is selected variable binned
+//Y-axis is number of states in a bin
+
 function loadChart(selected){
-    
-    var svg = d3.select('body')
-    .append('svg')
-    .attr('width', 800)
-    .attr('height', 800);
+    var svg = d3.select("body")
+    .append("svg")
+    .attr("width", 2000)
+    .attr("height", 800);
+
     // bar chart
+    d3.csv("Access Assignment 1 Proposal - Bryce Stoker-Schaeffer (11199983).csv").then(function(data){
+        data = dataSum(data,selected)
 
-    //TODO: Parse data here
-    var svg = d3.select('svg'),
-    width = 800,
-    height = 800,
-    radius = Math.min(width, height) / 2 
-    g = svg.append('g').attr('transform', 'translate('+ width / 2 + ',' + height / 2 + ')');
-
-    var pie = d3.pie().value(d => d.value)
-
-    //var pie = d3.pie()
-    //.value(function(d){
-      //  return dataSelector(d, selected)
-    //}).sort(null)
-
-
-    var arc = d3.arc().innerRadius(0).outerRadius(radius)
-
-    var path = d3.arc()
-			.outerRadius(radius - 40)
-			.innerRadius(100);
-	var label = d3.arc()
-			.outerRadius(radius)
-			.innerRadius(radius - 150);
-
-    d3.csv('Access Assignment 1 Proposal - Bryce Stoker-Schaeffer (11199983).csv').then(function(data){
         console.log(data)
-        //bin1 = d3.bin().value(d => d.State)
-        //temp = bin1(data)
+        //TODO: Parse data here
+        var svg = d3.select("svg"),
+        margin = 200,
+        width = 2000 - margin,
+        height = svg.attr("height") - margin,
+        bin = d3.bin().value(d => d.value).thresholds(40)
+        bins = bin(data)
+        g = svg.append("g")
+        console.log(bins)
+
+        //x axis
+        const x = d3.scaleLinear()
+        .domain([bins[0].x0, bins[bins.length - 1].x1])
+        .range([40, width])
+
         
-        data = dataSum(data, selected)
-        //console.log(data.map(function(d) {return d[0]}))
-        console.log(data)
-        var arcs = g.selectAll('arc')
-        .data(pie(data))
-        .enter().append('g')
-        .attr('class','arc')
-        
+        g.append("g")
+            .attr("transform", "translate(0," +height +")")
+            .call(d3.axisBottom(x).ticks(20))
+            .call(g => g.append("text")
+            .text(data.x))
+
+        //y axis
+        const y = d3.scaleLinear()
+        .domain([0, d3.max(bins, d => d.length)]).nice()
+        .range([height, 0])  
+
+        g.append("g")
+        .attr("transform", `translate(40,0)`)
+        .call(d3.axisLeft(y).ticks(10))
+        .call(g => g.select(".tick")
+        .text(data.y));
+
+        //color
         var color = d3.scaleOrdinal()
-        .domain(data.map(d => d.name))
-        .range(d3.quantize(t => d3.interpolateSpectral(t * 0.9 + 0.1), data.length).reverse())
-
-        arcs.append('path') 
-		.attr('fill',function(d){
-			return color(d.data.State);
+        .domain(data.map(d => d.State))
+        .range(d3.quantize(t => d3.interpolateSpectral(t * 0.7 + 0.5), data.length).reverse())
+        //bars
+        svg.selectAll("rect")
+        .data(bins)
+        .join("rect")
+        .attr("x", 1)
+        .attr("transform", function(d) { return `translate(${x(d.x0)} , ${y(d.length)})`})
+        .attr("width", function(d) { return x(d.x1) - x(d.x0) -1 ; })
+        .attr("height", function(d) { return height - y(d.length); })
+        .style("fill", function(d){
+			return color(d.x1);
 		})
-		.attr('d', arc);
-        arcs.append('text')
-			.attr('transform', function(d){return 'translate(' + label.centroid(d) + ')';})
-			.text(function(d){
-                return d.data.State + ": " + d.data.value});
+        .style("opacity", 0.6)
+        
     });
 
     d3.select('h3').style('color', 'darkblue');
     d3.select('h3').style('font-size', '24px');
 }
 
-loadChart('0')

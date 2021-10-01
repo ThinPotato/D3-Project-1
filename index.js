@@ -65,6 +65,10 @@ function loadChart(selected){
             return d + ((selected ==0 || selected == 4 || selected ==5) ? "%" : "");
         }).ticks(10))
 
+        var color = d3.scaleOrdinal()
+        .domain(data.map(d => d.name))
+        .range(d3.quantize(t => d3.interpolateSpectral(t * 0.9 + 0.1), data.length).reverse())
+
         g
         .selectAll(".bar")
         .data(data)
@@ -75,6 +79,9 @@ function loadChart(selected){
         .attr("y", function(d) {return yScale(Number(dataSelector(d,selected)));})
         .attr("width", xScale.bandwidth())
         .attr("height", function(d){return height - yScale(Number(dataSelector(d,selected)));})
+        .attr('fill',function(d){
+			return color(d.State);
+		})
     });
 
     d3.select('h3').style('color', 'darkblue');
