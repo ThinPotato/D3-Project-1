@@ -86,26 +86,22 @@ function loadChart(selected){
         g = svg.append("g")
         console.log(bins)
 
-        //x axis
-        const x = d3.scaleLinear()
+        const xScale = d3.scaleLinear()
         .domain([bins[0].x0, bins[bins.length - 1].x1])
         .range([40, width])
 
-        
-        g.append("g")
-            .attr("transform", "translate(0," +height +")")
-            .call(d3.axisBottom(x).ticks(20))
-            .call(g => g.append("text")
-            .text(data.x))
-
-        //y axis
-        const y = d3.scaleLinear()
+        const yScale = d3.scaleLinear()
         .domain([0, d3.max(bins, d => d.length)]).nice()
         .range([height, 0])  
+        g.append("g")
+        .attr("transform", "translate(0," +height +")")
+        .call(d3.axisBottom(xScale).ticks(20))
+        .call(g => g.append("text")
+        .text(data.x))
 
         g.append("g")
         .attr("transform", `translate(40,0)`)
-        .call(d3.axisLeft(y).ticks(10))
+        .call(d3.axisLeft(yScale).ticks(10))
         .call(g => g.select(".tick")
         .text(data.y));
 
@@ -117,10 +113,9 @@ function loadChart(selected){
         svg.selectAll("rect")
         .data(bins)
         .join("rect")
-        .attr("x", 1)
-        .attr("transform", function(d) { return `translate(${x(d.x0)} , ${y(d.length)})`})
-        .attr("width", function(d) { return x(d.x1) - x(d.x0) -1 ; })
-        .attr("height", function(d) { return height - y(d.length); })
+        .attr("transform", function(d) { return `translate(${xScale(d.x0)} , ${yScale(d.length)})`})
+        .attr("width", function(d) { return xScale(d.x1) - xScale(d.x0) -1 ; })
+        .attr("height", function(d) { return height - yScale(d.length); })
         .style("fill", function(d){
 			return color(d.x1);
 		})
